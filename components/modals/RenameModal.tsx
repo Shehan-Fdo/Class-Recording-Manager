@@ -4,7 +4,7 @@ import Modal from '../common/Modal';
 interface RenameModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onRename: (newName: string) => void;
+  onRename: (newName: string) => Promise<void>;
   itemType: string;
   currentName: string;
 }
@@ -18,10 +18,10 @@ const RenameModal: React.FC<RenameModalProps> = ({ isOpen, onClose, onRename, it
     }
   }, [isOpen, currentName]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim() && name.trim() !== currentName) {
-      onRename(name.trim());
+      await onRename(name.trim());
     }
     onClose();
   };

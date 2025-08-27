@@ -4,17 +4,17 @@ import Modal from '../common/Modal';
 interface AddLessonModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddLesson: (name: string) => void;
+  onAddLesson: (name: string) => Promise<void>;
   subjectName: string;
 }
 
 const AddLessonModal: React.FC<AddLessonModalProps> = ({ isOpen, onClose, onAddLesson, subjectName }) => {
   const [name, setName] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
-      onAddLesson(name.trim());
+      await onAddLesson(name.trim());
       setName('');
       onClose();
     }

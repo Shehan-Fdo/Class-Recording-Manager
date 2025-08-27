@@ -4,16 +4,16 @@ import Modal from '../common/Modal';
 interface AddSubjectModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddSubject: (name: string) => void;
+  onAddSubject: (name: string) => Promise<void>;
 }
 
 const AddSubjectModal: React.FC<AddSubjectModalProps> = ({ isOpen, onClose, onAddSubject }) => {
   const [name, setName] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
-      onAddSubject(name.trim());
+      await onAddSubject(name.trim());
       setName('');
       onClose();
     }

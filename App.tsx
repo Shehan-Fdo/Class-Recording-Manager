@@ -46,9 +46,9 @@ export default function App() {
     setMoveVideoModalOpen(true);
   };
 
-  const handleMoveVideo = (destinationSubjectId: string, destinationLessonId: string) => {
+  const handleMoveVideo = async (destinationSubjectId: string, destinationLessonId: string) => {
       if (videoToMove) {
-          moveVideo(
+          await moveVideo(
               videoToMove.subjectId,
               videoToMove.lessonId,
               videoToMove.video.id,
@@ -65,22 +65,22 @@ export default function App() {
     setRenameModalOpen(true);
   };
 
-  const handleRename = (newName: string) => {
+  const handleRename = async (newName: string) => {
     if (itemToRename) {
       if (itemToRename.type === 'subject') {
-        renameSubject(itemToRename.id, newName);
+        await renameSubject(itemToRename.id, newName);
       } else if (itemToRename.type === 'lesson' && itemToRename.subjectId) {
-        renameLesson(itemToRename.subjectId, itemToRename.id, newName);
+        await renameLesson(itemToRename.subjectId, itemToRename.id, newName);
       }
       setRenameModalOpen(false);
       setItemToRename(null);
     }
   };
 
-  const handleDeleteSubject = (e: React.MouseEvent, subjectId: string) => {
+  const handleDeleteSubject = async (e: React.MouseEvent, subjectId: string) => {
     e.stopPropagation();
     if(window.confirm('Are you sure you want to delete this subject and all its content?')) {
-      deleteSubject(subjectId);
+      await deleteSubject(subjectId);
       if(selectedSubjectId === subjectId) {
         setSelectedSubjectId(null);
         setSelectedLessonId(null);
@@ -88,10 +88,10 @@ export default function App() {
     }
   };
 
-  const handleDeleteLesson = (e: React.MouseEvent, lessonId: string) => {
+  const handleDeleteLesson = async (e: React.MouseEvent, lessonId: string) => {
     e.stopPropagation();
     if (selectedSubjectId && window.confirm('Are you sure you want to delete this lesson?')) {
-      deleteLesson(selectedSubjectId, lessonId);
+      await deleteLesson(selectedSubjectId, lessonId);
       if(selectedLessonId === lessonId) {
         // Find the index of the deleted lesson
         const lessonIndex = selectedSubject?.lessons.findIndex(l => l.id === lessonId);
