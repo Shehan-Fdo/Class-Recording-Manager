@@ -1,15 +1,16 @@
 import React from 'react';
 import type { Video } from '../types';
-import { TrashIcon, CheckCircleIcon, ArrowsRightLeftIcon } from './Icons';
+import { TrashIcon, CheckCircleIcon, ArrowsRightLeftIcon, SparklesIcon } from './Icons';
 
 interface VideoCardProps {
   video: Video;
   onDelete: () => void;
   onToggleWatched: () => void;
   onMove: () => void;
+  onSummarize: () => void;
 }
 
-const VideoCard: React.FC<VideoCardProps> = ({ video, onDelete, onToggleWatched, onMove }) => {
+const VideoCard: React.FC<VideoCardProps> = ({ video, onDelete, onToggleWatched, onMove, onSummarize }) => {
   return (
     <div className={`relative group bg-white border border-transparent rounded-xl shadow-sm transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex p-4 gap-5 ${video.watched ? 'opacity-60 bg-slate-100' : ''}`}>
       {/* Thumbnail */}
@@ -43,6 +44,13 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, onDelete, onToggleWatched,
                 className={`p-2 rounded-full transition-colors duration-200 ${video.watched ? 'text-green-600 bg-green-100' : 'text-gray-500 hover:bg-gray-200'}`}
             >
                 <CheckCircleIcon className="w-5 h-5" />
+            </button>
+            <button
+                onClick={onSummarize}
+                aria-label="Summarize video with AI"
+                className="p-2 rounded-full text-gray-500 hover:bg-blue-100 hover:text-blue-600 transition-colors opacity-0 group-hover:opacity-100"
+            >
+                <SparklesIcon className="w-5 h-5" />
             </button>
             <button
                 onClick={onMove}

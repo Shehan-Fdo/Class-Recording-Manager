@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import type { Subject, Lesson, Video } from './types';
 import { useDataManager } from './hooks/useDataManager';
+import { summarizeVideoWithGemini } from './services/geminiService';
 import VideoCard from './components/VideoCard';
 import AddSubjectModal from './components/modals/AddSubjectModal';
 import AddLessonModal from './components/modals/AddLessonModal';
@@ -8,6 +9,7 @@ import AddVideoModal from './components/modals/AddVideoModal';
 import AddBulkVideosModal from './components/modals/AddBulkVideosModal';
 import MoveVideoModal from './components/modals/MoveVideoModal';
 import RenameModal from './components/modals/RenameModal';
+import VideoSummaryModal from './components/modals/VideoSummaryModal';
 import { PlusIcon, TrashIcon, VideoCameraIcon, BookOpenIcon, AcademicCapIcon, SparklesIcon, PencilIcon } from './components/Icons';
 
 export default function App() {
@@ -26,6 +28,14 @@ export default function App() {
 
   const [isRenameModalOpen, setRenameModalOpen] = useState(false);
   const [itemToRename, setItemToRename] = useState<{ id: string; name: string; type: 'subject' | 'lesson'; subjectId?: string } | null>(null);
+  
+  const [isSummaryModalOpen, setSummaryModalOpen] = useState(false);
+  const [summaryData, setSummaryData] = useState<{ videoTitle: string; summary: string | null; isLoading: boolean; error: string | null; }>({
+    videoTitle: '',
+    summary: null,
+    isLoading: false,
+    error: null,
+  });
 
   const selectedSubject = useMemo(() => subjects.find(s => s.id === selectedSubjectId), [subjects, selectedSubjectId]);
   const selectedLesson = useMemo(() => selectedSubject?.lessons.find(l => l.id === selectedLessonId), [selectedSubject, selectedLessonId]);
@@ -33,7 +43,6 @@ export default function App() {
   const handleSelectSubject = (subjectId: string) => {
     setSelectedSubjectId(subjectId);
     const subject = subjects.find(s => s.id === subjectId);
-    // Auto-select the first lesson if it exists, otherwise null
     setSelectedLessonId(subject?.lessons[0]?.id || null);
   };
 
@@ -93,13 +102,30 @@ export default function App() {
     if (selectedSubjectId && window.confirm('Are you sure you want to delete this lesson?')) {
       await deleteLesson(selectedSubjectId, lessonId);
       if(selectedLessonId === lessonId) {
-        // Find the index of the deleted lesson
         const lessonIndex = selectedSubject?.lessons.findIndex(l => l.id === lessonId);
-        // If there's another lesson, select it. Otherwise, select null.
         const nextLesson = selectedSubject?.lessons[lessonIndex === 0 ? 1 : (lessonIndex ?? 1) - 1];
         setSelectedLessonId(nextLesson?.id || null);
       }
     }
+  };
+
+  const handleOpenSummaryModal = async (video: Video) => {
+    setSummaryData({ videoTitle: video.title, isLoading: true, summary: null, error: null });
+    setSummaryModalOpen(true);
+    try {
+        const summaryText = await summarizeVideoWithGemini(video.title, video.authorName);
+        setSummaryData(prev => ({ ...prev, summary: summaryText, isLoading: false }));
+    } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "An unknown error occurred.";
+        setSummaryData(prev => ({ ...prev, error: errorMessage, isLoading: false }));
+    }
+  };
+
+  const handleCloseSummaryModal = () => {
+    setSummaryModalOpen(false);
+    setTimeout(() => {
+        setSummaryData({ videoTitle: '', isLoading: false, summary: null, error: null });
+    }, 300);
   };
 
   const filteredVideos = useMemo(() => {
@@ -269,6 +295,7 @@ export default function App() {
                             onDelete={() => sId && lId && deleteVideo(sId, lId, video.id)}
                             onToggleWatched={() => sId && lId && toggleVideoWatched(sId, lId, video.id)}
                             onMove={() => sId && lId && handleOpenMoveVideoModal(video, sId, lId)}
+                            onSummarize={() => handleOpenSummaryModal(video)}
                         />
                     );
                 })}
@@ -303,6 +330,16 @@ export default function App() {
             onRename={handleRename}
             itemType={itemToRename.type}
             currentName={itemToRename.name}
+        />
+      )}
+      {isSummaryModalOpen && (
+        <VideoSummaryModal
+            isOpen={isSummaryModalOpen}
+            onClose={handleCloseSummaryModal}
+            videoTitle={summaryData.videoTitle}
+            summary={summaryData.summary}
+            isLoading={summaryData.isLoading}
+            error={summaryData.error}
         />
       )}
     </div>

@@ -1,22 +1,17 @@
 {
-  "name": "youtube-class-recording-manager",
+  "name": "youtube-class-recorder",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "description": "Frontend for YouTube Class Recorder with Vercel backend functions.",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "dev": "echo \"Run your frontend development server here\"",
+    "build": "echo \"No build step required for static frontend, Vercel handles API routes\""
   },
   "dependencies": {
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "@google/genai": "^1.15.0",
-    "dexie": "^4.0.7"
+    "@google/genai": "^1.15.0"
   },
   "devDependencies": {
-    "@types/node": "^22.14.0",
-    "typescript": "~5.8.2",
-    "vite": "^6.2.0"
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
   }
 }
