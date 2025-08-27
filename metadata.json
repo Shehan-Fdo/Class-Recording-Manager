@@ -1,0 +1,5 @@
+{
+  "name": "YouTube Class Recording Manager",
+  "description": "An application to organize, manage, and access YouTube class recordings efficiently. It stores links by subject and lesson, automatically fetching video details like thumbnails and titles, providing a structured and searchable personal playlist.",
+  "requestFramePermissions": []
+}
