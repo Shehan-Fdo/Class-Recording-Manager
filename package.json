@@ -5,7 +5,7 @@
   "description": "Frontend for YouTube Class Recorder with Vercel backend functions.",
   "scripts": {
     "dev": "echo \"Run your frontend development server here\"",
-    "build": "echo \"No build step required for static frontend, Vercel handles API routes\""
+    "build": "mkdir -p dist && cp index.html index.tsx metadata.json types.ts dist/ && cp -r components hooks services dist/"
   },
   "dependencies": {
     "@google/genai": "^1.15.0"
