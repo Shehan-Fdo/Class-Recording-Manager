@@ -33,8 +33,6 @@ const responseSchema = {
  */
 export const organizeVideosWithGemini = async (text: string): Promise<OrganizedVideos> => {
   if (!process.env.API_KEY) {
-    // In a real app, you might want a more user-friendly notification.
-    // For this context, throwing an error is fine to indicate a config issue.
     console.error("API_KEY environment variable not set.");
     throw new Error("Gemini API key is not configured. Please contact support.");
   }
@@ -61,7 +59,6 @@ export const organizeVideosWithGemini = async (text: string): Promise<OrganizedV
     });
 
     const jsonString = response.text.trim();
-    // A secondary check to ensure the response is valid JSON before parsing
     if (!jsonString.startsWith('{') && !jsonString.endsWith('}')) {
        throw new Error("AI response was not valid JSON.");
     }
@@ -72,7 +69,6 @@ export const organizeVideosWithGemini = async (text: string): Promise<OrganizedV
         throw new Error("AI response is missing required 'lessonName' or 'videoUrls' fields.");
     }
     
-    // Filter out any non-string or empty values from the URLs array
     parsedData.videoUrls = parsedData.videoUrls.filter((url: any) => typeof url === 'string' && url.trim() !== '');
 
     return parsedData;
@@ -86,4 +82,36 @@ export const organizeVideosWithGemini = async (text: string): Promise<OrganizedV
     }
     throw new Error("Failed to process text with the AI service. Please try again later.");
   }
+};
+
+/**
+ * Generates a concise summary of a video based on its title and author.
+ * @param title The title of the YouTube video.
+ * @param author The author/channel of the YouTube video.
+ * @returns A promise that resolves to a string containing the summary.
+ */
+export const summarizeVideoWithGemini = async (title: string, author: string): Promise<string> => {
+    if (!process.env.API_KEY) {
+        throw new Error("Gemini API key is not configured.");
+    }
+
+    try {
+        const prompt = `
+            As a helpful learning assistant, please provide a concise, one-paragraph summary of the likely content of the following YouTube video.
+            Base your summary on the video's title and author. Explain what a student might learn from it.
+
+            Video Title: "${title}"
+            Author/Channel: "${author}"
+        `;
+        
+        const response = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: prompt,
+        });
+
+        return response.text.trim();
+    } catch (error) {
+        console.error("Error summarizing video with Gemini:", error);
+        throw new Error("Failed to generate video summary with the AI service.");
+    }
 };

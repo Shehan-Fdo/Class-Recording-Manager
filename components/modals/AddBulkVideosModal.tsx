@@ -53,7 +53,10 @@ const AddBulkVideosModal: React.FC<AddBulkVideosModalProps> = ({ isOpen, onClose
   };
 
   const handleAddVideos = async () => {
-    if (!parsedData) return;
+    if (!parsedData || !parsedData.lessonName.trim()) {
+      setError("Lesson name cannot be empty.");
+      return;
+    };
     setIsAdding(true);
     setError(null);
     try {
@@ -69,9 +72,9 @@ const AddBulkVideosModal: React.FC<AddBulkVideosModalProps> = ({ isOpen, onClose
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title={`Bulk Add Videos to ${subjectName}`}>
-      <div className="space-y-4">
+      <div className="space-y-6">
         <div>
-          <label htmlFor="bulk-video-text" className="block text-sm font-medium text-gray-300 mb-1">
+          <label htmlFor="bulk-video-text" className="block text-sm font-medium text-gray-700 mb-2">
             Paste Video List
           </label>
           <textarea
@@ -79,56 +82,56 @@ const AddBulkVideosModal: React.FC<AddBulkVideosModalProps> = ({ isOpen, onClose
             rows={8}
             value={text}
             onChange={(e) => setText(e.target.value)}
-            className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
             placeholder="Paste text containing a lesson name and multiple YouTube URLs..."
             disabled={isParsing || !!parsedData}
           />
         </div>
 
-        {error && <p className="text-red-400 text-sm">{error}</p>}
+        {error && <p className="text-red-600 text-sm font-medium">{error}</p>}
 
         {!parsedData && (
           <div className="flex justify-end">
             <button
               onClick={handleParseText}
               disabled={isParsing || !text.trim()}
-              className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500 transition-colors disabled:bg-indigo-800 disabled:cursor-wait"
+              className="inline-flex items-center px-6 py-2.5 bg-blue-600 text-white font-medium rounded-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-500 transition-colors disabled:bg-blue-300 disabled:cursor-wait"
             >
-              <SparklesIcon className="w-5 h-5 mr-2" />
+              <SparklesIcon className="w-5 h-5 mr-2 -ml-1" />
               {isParsing ? 'Analyzing...' : 'Analyze with AI'}
             </button>
           </div>
         )}
         
         {parsedData && (
-            <div className="border border-gray-700 rounded-lg p-4 bg-gray-900/50 space-y-4">
-                <h4 className="font-semibold text-white">Analysis Result</h4>
+            <div className="border border-gray-200 rounded-xl p-5 bg-slate-50 space-y-5">
+                <h4 className="font-medium text-lg text-gray-800">Analysis Result</h4>
                 <div>
-                    <label htmlFor="lesson-name-edit" className="block text-sm font-medium text-gray-300 mb-1">Lesson Name (Editable)</label>
+                    <label htmlFor="lesson-name-edit" className="block text-sm font-medium text-gray-700 mb-2">Lesson Name (Editable)</label>
                     <input
                         type="text"
                         id="lesson-name-edit"
                         value={parsedData.lessonName}
                         onChange={(e) => setParsedData({ ...parsedData, lessonName: e.target.value })}
-                        className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white"
+                        className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                     />
                 </div>
-                <p className="text-sm text-gray-300">
-                    Found <span className="font-bold text-white">{parsedData.videoUrls.length}</span> video(s) to add.
+                <p className="text-sm text-gray-600">
+                    Found <span className="font-bold text-gray-900">{parsedData.videoUrls.length}</span> video(s) to add.
                 </p>
-                <div className="flex justify-end space-x-2 pt-2">
+                <div className="flex justify-end space-x-3 pt-2">
                     <button
-                        onClick={() => { setParsedData(null); setError(null); }}
-                        className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-500 transition-colors"
+                        onClick={() => { setParsedData(null); setError(null); setText(''); }}
+                        className="px-6 py-2.5 bg-white text-gray-700 border border-gray-300 font-medium rounded-full hover:bg-gray-50 transition-colors"
                     >
                         Back
                     </button>
                     <button
                         onClick={handleAddVideos}
-                        disabled={isAdding || !parsedData.lessonName.trim()}
-                        className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors disabled:bg-green-800 disabled:cursor-wait"
+                        disabled={isAdding}
+                        className="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-full shadow-sm hover:bg-blue-700 transition-colors disabled:bg-blue-300"
                     >
-                        {isAdding ? 'Adding Videos...' : 'Confirm & Add'}
+                        {isAdding ? 'Adding...' : 'Add Videos'}
                     </button>
                 </div>
             </div>

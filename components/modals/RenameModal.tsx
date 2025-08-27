@@ -1,49 +1,55 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '../common/Modal';
 
-interface AddLessonModalProps {
+interface RenameModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddLesson: (name: string) => void;
-  subjectName: string;
+  onRename: (newName: string) => void;
+  itemType: string;
+  currentName: string;
 }
 
-const AddLessonModal: React.FC<AddLessonModalProps> = ({ isOpen, onClose, onAddLesson, subjectName }) => {
-  const [name, setName] = useState('');
+const RenameModal: React.FC<RenameModalProps> = ({ isOpen, onClose, onRename, itemType, currentName }) => {
+  const [name, setName] = useState(currentName);
+
+  useEffect(() => {
+    if (isOpen) {
+      setName(currentName);
+    }
+  }, [isOpen, currentName]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (name.trim()) {
-      onAddLesson(name.trim());
-      setName('');
-      onClose();
+    if (name.trim() && name.trim() !== currentName) {
+      onRename(name.trim());
     }
+    onClose();
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={`Add Lesson to ${subjectName}`}>
+    <Modal isOpen={isOpen} onClose={onClose} title={`Rename ${itemType}`}>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="lesson-name" className="block text-sm font-medium text-gray-700 mb-2">
-            Lesson Name
+          <label htmlFor="item-name" className="block text-sm font-medium text-gray-700 mb-2">
+            New Name for "{currentName}"
           </label>
           <input
             type="text"
-            id="lesson-name"
+            id="item-name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-            placeholder="e.g., Operating Systems"
             autoFocus
+            onFocus={(e) => e.target.select()}
           />
         </div>
         <div className="flex justify-end pt-2">
           <button
             type="submit"
             className="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-500 transition-colors disabled:bg-blue-300 disabled:cursor-not-allowed"
-            disabled={!name.trim()}
+            disabled={!name.trim() || name.trim() === currentName}
           >
-            Add Lesson
+            Rename
           </button>
         </div>
       </form>
@@ -51,4 +57,4 @@ const AddLessonModal: React.FC<AddLessonModalProps> = ({ isOpen, onClose, onAddL
   );
 };
 
-export default AddLessonModal;
+export default RenameModal;

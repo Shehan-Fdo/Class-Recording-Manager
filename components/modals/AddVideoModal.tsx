@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Modal from '../common/Modal';
 import { fetchVideoDetails, type YouTubeVideoDetails } from '../../services/youtubeService';
@@ -65,18 +64,18 @@ const AddVideoModal: React.FC<AddVideoModalProps> = ({ isOpen, onClose, onAddVid
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title={`Add Video to ${lessonName}`}>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="video-url" className="block text-sm font-medium text-gray-300 mb-1">
+          <label htmlFor="video-url" className="block text-sm font-medium text-gray-700 mb-2">
             YouTube Video URL
           </label>
-          <div className="flex space-x-2">
+          <div className="flex space-x-3">
             <input
               type="url"
               id="video-url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              className="flex-grow bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="flex-grow bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
               placeholder="https://www.youtube.com/watch?v=..."
               autoFocus
             />
@@ -84,23 +83,23 @@ const AddVideoModal: React.FC<AddVideoModalProps> = ({ isOpen, onClose, onAddVid
               type="button"
               onClick={handleFetchDetails}
               disabled={isLoading}
-              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-gray-400 transition-colors disabled:bg-gray-700 disabled:cursor-wait"
+              className="px-6 py-2.5 bg-blue-100 text-blue-700 font-medium rounded-full hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-500 transition-colors disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-wait"
             >
               {isLoading ? 'Fetching...' : 'Fetch'}
             </button>
           </div>
         </div>
 
-        {error && <p className="text-red-400 text-sm">{error}</p>}
+        {error && <p className="text-red-600 text-sm">{error}</p>}
         
         {videoDetails && (
-            <div className="border border-gray-700 rounded-lg p-3 bg-gray-900/50">
-                <h4 className="font-semibold text-white mb-2">Video Preview</h4>
-                <div className="flex items-start space-x-3">
-                    <img src={videoDetails.thumbnail_url} alt="Video thumbnail" className="w-32 h-auto rounded-md" />
+            <div className="border border-gray-200 rounded-xl p-4 bg-slate-50">
+                <h4 className="font-medium text-gray-800 mb-3">Video Preview</h4>
+                <div className="flex items-start space-x-4">
+                    <img src={videoDetails.thumbnail_url} alt="Video thumbnail" className="w-40 h-auto rounded-lg shadow-sm" />
                     <div className="flex-1">
-                        <p className="font-medium text-gray-100">{videoDetails.title}</p>
-                        <p className="text-sm text-gray-400">{videoDetails.author_name}</p>
+                        <p className="font-semibold text-gray-800">{videoDetails.title}</p>
+                        <p className="text-sm text-gray-600 mt-1">{videoDetails.author_name}</p>
                     </div>
                 </div>
             </div>
@@ -109,7 +108,7 @@ const AddVideoModal: React.FC<AddVideoModalProps> = ({ isOpen, onClose, onAddVid
         <div className="flex justify-end pt-2">
           <button
             type="submit"
-            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500 transition-colors disabled:bg-indigo-800 disabled:cursor-not-allowed"
+            className="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-500 transition-colors disabled:bg-blue-300 disabled:cursor-not-allowed"
             disabled={!videoDetails || isLoading}
           >
             {isLoading && videoDetails ? 'Adding...' : 'Add Video'}
